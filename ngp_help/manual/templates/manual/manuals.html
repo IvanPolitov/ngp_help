@@ -12,10 +12,12 @@
 	<div class="card-header">Категория: {{manual.category.title}}</div>
 	<div class="card-body">
 		<div class="media">
-			<h5 class="card-title">{{manual.name}}</h5>
+			<h5 class="card-title"><a href='{{ manual.get_absolute_url }}'>{{manual.name}}</a></h5>
 		</div>
 	</div>
-	<div class="card-footer text-muted">{{item.created_at|date:"Y-m-d H:i:s"}}</div>
+	<div class="card-footer text-muted">
+        {{manual.created_at|date:"Y-m-d H:i:s"}}
+    </div>
 </div>
 {%endfor%}
 {% endblock %}

@@ -15,8 +15,8 @@ class Manual(models.Model):
     # creator = models.ForeignKey(
     #     "User", verbose_name="Создатель", on_delete=models.PROTECT)
 
-    # def get_absolute_url(self):
-    #     return reverse("view_manual", kwargs={"pk": self.pk})
+    def get_absolute_url(self):
+        return reverse('manual_item', kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.name

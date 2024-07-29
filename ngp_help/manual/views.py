@@ -6,10 +6,6 @@ from django.db.models.query import QuerySet
 from .models import Manual
 
 
-def q(request):
-    return render(request, 'manual/manuals.html')
-
-
 class ManualListView(ListView):
     model = Manual
     template_name = 'manual/manuals.html'
@@ -23,3 +19,8 @@ class ManualListView(ListView):
 
     def get_queryset(self) -> QuerySet[Any]:
         return Manual.objects.all().order_by('name')
+
+
+class ManualDetailView(DetailView):
+    model = Manual
+    context_object_name = 'manual_item'
