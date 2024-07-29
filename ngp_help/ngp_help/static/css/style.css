@@ -1,0 +1,9 @@
+body {
+	background-color: #41e3ee;
+}
+.card {
+	border-width: 1;
+	border-color: rgb(0, 0, 0);
+	border-style: solid;
+}
+`

@@ -1,4 +1,21 @@
 {% extends 'base.html' %}
+
+{% block title %}
+{{ title }} :: {{ block.super }}
+{% endblock %}
+
+
+
 {%block content %}
-    <h2>Hello manuals!!!</h2>
+{%for manual in manuals%}
+<div class="card mb-3">
+	<div class="card-header">Категория: {{manual.category.title}}</div>
+	<div class="card-body">
+		<div class="media">
+			<h5 class="card-title">{{manual.name}}</h5>
+		</div>
+	</div>
+	<div class="card-footer text-muted">{{item.created_at|date:"Y-m-d H:i:s"}}</div>
+</div>
+{%endfor%}
 {% endblock %}
