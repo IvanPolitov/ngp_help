@@ -1,0 +1,148 @@
+<p><a href="https://docs.python.org/3/library/dataclasses.html">Dataclasses</a></p>
+<h1>База</h1>
+<p>Классы данных (Data classes) призваны автоматизировать генерацию кода классов, которые используются для хранения данных.</p>
+<p>Например:</p>
+<pre><code class="language-python">class RegularBook:    
+	def __init__(self, title, author):
+	        self.title = title
+	        self.author = author
+</code></pre>
+<p>аналогично применению [[Декоратор|декоратора]] <code>@dataclass</code></p>
+<pre><code class="language-python">from dataclasses import dataclass
+
+@dataclass
+class Book:    
+	title: str    
+	author: str
+</code></pre>
+<p>[[Аннотация типов]] в этом случае обязательно, поля без аннотации будут проигнорированы.</p>
+<p>Благодаря декоратору <code>@dataclass</code> автоматически генерируется обычный класс с реализованными методами <code>__init__</code>, <code>__repr__</code>, <code>__str__</code>,<code>__eq__</code>, от которого можно наследоваться.</p>
+<h1>Альтернативы</h1>
+<h6>[[Кортеж]]/[[Словарь]]</h6>
+<p>Подходит только для overпростых структур. В кортеже нужно помнить порядок, в словаре — ключи.</p>
+<h6>[[Кортеж#^ae8901|Именованный кортеж]]</h6>
+<p>Фактически тот же датакласс, но</p>
+<ul>
+<li>можно сравнивать экземпляры разных туплов (оно нам не надо)</li>
+<li>кортежи неизменяемы (хочется изменять)</li>
+<li>можно пользоваться как кортежами (например итерироваться) (не знаю почему это плохо)</li>
+</ul>
+<h6>Другие</h6>
+<p>Есть всякие библеотеки типа <a href="https://attrs.org/">attrs</a>, но, как по мне, зачем усложнять тот же датакласс.</p>
+<h1>Создание</h1>
+<p>Либо декоратор <code>@dataclass</code>, как показано выше, либо функция <code>make_dataclass</code>:</p>
+<pre><code class="language-python">from dataclasses import make_dataclass
+Book = make_dataclass(&quot;Book&quot;, [&quot;title&quot;, &quot;author&quot;])
+book = Book(&quot;Fahrenheit 451&quot;, &quot;Bradbury&quot;)
+</code></pre>
+<h1>Значения по умолчанию</h1>
+<p>Не нужно переопределять <code>__init__</code></p>
+<pre><code class="language-python">@dataclass
+class Book:
+    title: str = &quot;Unknown&quot;
+    author: str = &quot;Unknown author&quot;
+
+&gt;&gt;&gt; Book()
+Book(title='Unknown', author='Unknown author')
+&gt;&gt;&gt; Book(&quot;Farenheit 451&quot;)
+Book(title='Farenheit 451', author='Unknown author')
+</code></pre>
+<h1>Иммутабельные датаклассы</h1>
+<p>Теперь датакласс неизменяемый:</p>
+<pre><code class="language-python">@dataclass(frozen=True)
+class Book:  
+	title: str  
+	author: str
+</code></pre>
+<h1>Настройка датакласса</h1>
+<ul>
+<li><code>init</code><br />
+<code>True</code> (по умолчанию) — генерируется метод <code>__init__</code>. Если у класса уже определен метод <code>__init__</code>, параметр игнорируется.</li>
+<li><code>repr</code><br />
+<code>True</code> (по умолчанию) — генерируется метод <code>__repr__</code>. Строка содержит имя класса и название и представление всех полей, определенных в классе. Можно исключить отдельные поля</li>
+<li><code>eq</code><br />
+<code>True</code> (по умолчанию)  — генерируется метод <code>__eq__</code>. Объекты сравниваются , как  кортежи, содержащие соответствующие значения полей и проверяется совпадение типов.</li>
+<li><code>order</code><br />
+<code>False</code> (по умолчанию)   — генерируются методы <code>__lt__</code>, <code>__le__</code>, <code>__gt__</code> и <code>__ge__</code>. Объекты сравниваются , как  кортежи, содержащие соответствующие значения полей и проверяется совпадение типов.<br />
+Если <code>order</code> задан, а <code>eq</code> — нет, будет сгенерировано исключение <code>ValueError</code>. Так же, класс не должен содержать уже определенных методов сравнения.<br />
+Для сравнения по определенному параметру заводим поле <code>sort_index</code>, которое в <code>__post_init__</code> установим равным нужному полю (<code>sort_index: int = field(init=False, repr=False)</code>)</li>
+<li><code>unsafe_hash</code> влияет на генерацию метода <code>__hash__</code>. Поведение так же зависит от значений параметров <code>eq</code> и <code>frozen</code></li>
+</ul>
+<h1>Мутабельные значения по умолчанию</h1>
+<p>Для использования изменяемых значений по умолчанию без проблем, следует использовать функцию <code>field</code>.</p>
+<pre><code class="language-python">@dataclass
+class Bookshelf:    
+	books: List[Book] = field(default_factory=list)
+</code></pre>
+<p>Параметры:</p>
+<ul>
+<li><code>default_factory</code><br />
+Используется для вызова параметра с нулевым аргументов в качестве значения по умолчанию + для использования в качестве значения по умолчанию изменяемых типов данных</li>
+</ul>
+<ul>
+<li><code>default</code><br />
+значение по умолчанию. Этот параметр необходим, так как вызов <code>field</code> заменяет задание значения поля по умолчанию</li>
+<li><code>init</code><br />
+<code>True</code>  (по умолчанию) использование поля в методе <code>__init__</code></li>
+<li><code>repr</code><br />
+<code>True</code> (по умолчанию) использование поля в методе <code>__repr__</code></li>
+<li><code>compare</code><br />
+<code>True</code> (по умолчанию) использование поля в методах сравнения (<code>__eq__</code>, <code>__le__</code> и других)</li>
+<li><code>hash</code><br />
+булевое или <code>None</code>(по умолчанию). Если <code>True</code>, поле используется при вычислении хэша. Если <code>None</code>  — используется значение параметра <code>compare</code>.<br />
+Одной из причин указать <code>hash=False</code> при заданном <code>compare=True</code> может быть сложность вычисления хэша поля при том, что оно необходимо для сравнения.</li>
+<li><code>metadata</code><br />
+произвольный словарь или <code>None</code>. Значение оборачивается в <code>MappingProxyType</code>, чтобы оно стало неизменяемым. Этот параметр не используется самими классами данных и предназначено для работы сторонних расширений.</li>
+</ul>
+<h1>Обработка после инициализации</h1>
+<p>Автосгенерированный метод <code>__init__</code> вызывает метод <code>__post_init__</code>, если он определен в классе. Как правило он вызывается в форме <code>self.__post_init__()</code>, однако если в классе определены переменные типа <code>InitVar</code>, они будут переданы в качестве параметров метода.<br />
+Если метод <code>__init__</code> не был сгенерирован, то он <code>__post_init__</code> не будет вызываться.</p>
+<pre><code class="language-python">@dataclass
+class Book:    
+	title: str    
+	author: str    
+	desc: str = None 
+	   
+	def __post_init__(self):        
+		self.desc = self.desc or &quot;`%s` by %s&quot; % (self.title, self.author)
+
+
+&gt;&gt;&gt;  Book(&quot;Fareneheit 481&quot;, &quot;Bradbury&quot;)
+Book(title='Fareneheit 481', author='Bradbury', desc='`Fareneheit 481` by Bradbury')
+</code></pre>
+<h6>Параметры только для инициализации</h6>
+<p>Одна из возможностей, связанных с методом <code>__post_init__</code> — параметры, используемые только для инициализации. Если при объявления поля указать в качестве его типа <code>InitVar</code>, его значение будет передано как параметр метода <code>__post_init__</code>. Никак по-другому такие поля не используются в классе данных.</p>
+<pre><code class="language-python">@dataclass
+class Book:    
+	title: str    
+	author: str    
+	gen_desc: InitVar[bool] = True    
+	desc: str = None    
+	
+	def __post_init__(self, gen_desc: str):        
+		if gen_desc and self.desc is None:
+			self.desc = &quot;`%s` by %s&quot; % (self.title, self.author)
+
+
+&gt;&gt;&gt; Book(&quot;Fareneheit 481&quot;, &quot;Bradbury&quot;)
+Book(title='Fareneheit 481', author='Bradbury', desc='`Fareneheit 481` by Bradbury')
+&gt;&gt;&gt; Book(&quot;Fareneheit 481&quot;, &quot;Bradbury&quot;, gen_desc=False)
+Book(title='Fareneheit 481', author='Bradbury', desc=None)
+</code></pre>
+<h1>Наследование</h1>
+<p>Когда вы используете декоратор <code>@dataclass</code>, он проходит по всем родительским классам начиная с object и для каждого найденного класса данных сохраняет поля в упорядоченный словарь (ordered mapping), затем добавляя свойства обрабатываемого класса. Все сгенерированные методы используют поля из полученного упорядоченного словаря.<br />
+Как следствие, если родительский класс определяет значения по умолчанию, вы должны будете поля определять со значениями по умолчанию.<br />
+Так как упорядоченный словарь хранит значения в порядке вставки, то для следующих классов</p>
+<pre><code class="language-python">@dataclass
+class BaseBook:    
+title: Any = None    
+author: str = None
+
+@dataclass
+class Book(BaseBook):    
+desc: str = None    
+title: str = &quot;Unknown&quot;
+</code></pre>
+<p>будет сгенерирован <code>__init__</code> метод с такой сигнатурой:</p>
+<pre><code class="language-python">def __init__(self, title: str=&quot;Unknown&quot;, author: str=None, desc: str=None)
+</code></pre>

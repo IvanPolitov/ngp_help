@@ -12,8 +12,8 @@ class Manual(models.Model):
         verbose_name="Дата обновления", auto_now=True)
     category = models.ForeignKey(
         "Category", verbose_name="Категория", on_delete=models.PROTECT)
-    # creator = models.ForeignKey(
-    #     "User", verbose_name="Создатель", on_delete=models.PROTECT)
+    creator = models.ForeignKey(
+        "auth.User", verbose_name="Создатель", on_delete=models.PROTECT, blank=True)
 
     def get_absolute_url(self):
         return reverse('manual_item', kwargs={"pk": self.pk})

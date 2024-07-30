@@ -1,6 +1,11 @@
 body {
-	background-color: #41e3ee;
+	background-color: #24757a;
 }
-selector {
-  border: border-width border-style border-color;
+.card {
+	border-width: 1;
+	border-color: rgb(0, 0, 0);
+	border-style: solid;
+}
+h1 {
+	color: #e91414;
 }
