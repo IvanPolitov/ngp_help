@@ -6,7 +6,7 @@
 
 
 
-{%block content %}
+{%block is_authenticated %}
 {%for manual in manuals%}
 <div class="card mb-3">
 	<div class="card-header">Категория: {{manual.category.title}}</div>
@@ -20,4 +20,7 @@
     </div>
 </div>
 {%endfor%}
+{% endblock %}
+{% block not_is_authenticated %}
+<div> Пожалуйста, <a href="{% url 'login' %}">войдите</a> или <a href="{% url 'register' %}">зарегистрируйтесь</a>
 {% endblock %}

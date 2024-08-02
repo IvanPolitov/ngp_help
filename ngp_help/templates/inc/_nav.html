@@ -6,7 +6,12 @@
 				<li>
 					<a href="{% url 'manuals' %}">Главная</a>
 				</li>
-		
+				<li>
+					<a href="{% url 'manual_add' %}">Добавить</a>
+				</li>	
+				<li>
+					<a href="{% url 'manual_add_file' %}">Добавить файлом</a>
+				</li>			
 				{% if request.user.is_authenticated %}
 					<li>
 						UserUserUser

@@ -4,7 +4,7 @@
 Login :: {{block.super}}
 {% endblock %}
 
-{%block content %}
+{%block not_is_authenticated %}
 
 <h1>Login</h1>
 <form method="post">
@@ -12,5 +12,12 @@ Login :: {{block.super}}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary btn-block">Login</button>
 </form>
+
+{% endblock %}
+
+{%block is_authenticated %}
+
+<h1>Сначала выйдите из текущего аккаунта</h1>
+
 
 {% endblock %}

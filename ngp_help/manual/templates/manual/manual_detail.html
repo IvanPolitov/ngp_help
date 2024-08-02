@@ -6,7 +6,7 @@
 
 
 
-{%block content %}
+{%block is_authenticated %}
 <div class="card mb-3">
 	<div class="card-header">Категория: {{manual_item.category.title}}</div>
 	<div class="card-footer text-muted">{{manual_item.created_at|date:"Y-m-d H:i:s"}}</div>

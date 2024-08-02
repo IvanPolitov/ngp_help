@@ -25,8 +25,14 @@
 			{% endfor %}
 		{% endif %}
 
-		{% block content %}
-			<h1>Hello world!!!</h1>
-		{% endblock %}
+		{% if request.user.is_authenticated %}
+			{% block is_authenticated %}
+				<h1>Hello world!!!is_authenticated</h1>
+			{% endblock %}
+		{% else %}
+			{% block not_is_authenticated %}
+				<h1>Hello world!!!not is_authenticated</h1>
+			{% endblock %}
+		{% endif %}
 	</body>
 </html>
